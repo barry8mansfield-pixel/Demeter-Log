@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Grower Log"/>
+<meta name="theme-color" content="#222222"/>
+<meta name="app-version" content="1778041687"/>
+<title>Grower Log</title>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#f0f0f0;}
+.pw{max-width:390px;margin:0 auto;background:#1a1a1a;min-height:100vh;}
+.screen{min-height:100vh;display:none;flex-direction:column;}
+.screen.active{display:flex;}
+.topbar{display:flex;align-items:center;gap:8px;padding:14px 16px 12px;background:#222;border-bottom:1px solid #333;position:sticky;top:0;z-index:10;}
+.topbar h1{font-size:17px;font-weight:600;flex:1;color:#fff;}
+.back{background:none;border:none;font-size:24px;color:#c9a227;cursor:pointer;padding:0 4px 0 0;}
+.sb{flex:1;overflow-y:auto;padding:14px 16px 40px;}
+input,select,textarea{width:100%;font-size:16px;padding:12px;border:1px solid #444;border-radius:10px;background:#2a2a2a;color:#f0f0f0;outline:none;-webkit-appearance:none;appearance:none;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+textarea{height:88px;resize:vertical;}
+.lbl{font-size:12px;color:#888;display:block;margin:13px 0 5px;}
+.gold{display:block;width:100%;padding:15px;background:#c9a227;color:#1a1a1a;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;text-align:center;margin-bottom:10px;}
+.green{display:block;width:100%;padding:15px;background:#2a5c3a;color:#7dcc99;border:1px solid #3a7a50;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:15px;}
+.ghost{display:block;width:100%;padding:12px;border:1px dashed #444;border-radius:12px;background:none;color:#c9a227;font-size:14px;cursor:pointer;margin-bottom:4px;}
+.sm{font-size:12px;padding:6px 12px;border:1px solid #444;border-radius:8px;background:none;color:#aaa;cursor:pointer;}
+.delbtn{font-size:12px;padding:6px 12px;border:1px solid #7a2a2a;border-radius:8px;background:none;color:#f08080;cursor:pointer;}
+.delcfm{font-size:12px;padding:6px 14px;border:1px solid #f08080;border-radius:8px;background:#3a1a1a;color:#f08080;cursor:pointer;font-weight:600;}
+.sbar{display:flex;background:#2a2a2a;border-radius:10px;padding:3px;margin-bottom:14px;gap:3px;}
+.stab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:600;border-radius:8px;cursor:pointer;color:#666;border:none;background:none;}
+.stab.on{background:#c9a227;color:#1a1a1a;}
+.login-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;}
+.comm-card{background:#222;border:1px solid #333;border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;}
+.comm-acc{position:absolute;left:0;top:0;bottom:0;width:4px;}
+.comm-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;}
+.cstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.cstat{text-align:center;background:#2a2a2a;border-radius:10px;padding:8px 4px;}
+.cstat-v{font-size:16px;font-weight:700;color:#fff;}
+.cstat-l{font-size:10px;color:#888;margin-top:2px;}
+.cfooter{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #333;}
+.grow-row{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid #2a2a2a;cursor:pointer;}
+.grow-row:active{background:#222;}
+.av{width:42px;height:42px;min-width:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#3a2e0a;color:#c9a227;}
+.gm{flex:1;min-width:0;}
+.gn{font-weight:600;font-size:15px;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gs{font-size:12px;color:#888;}
+.shdr{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;padding:12px 16px 6px;}
+.conv-card{background:#222;border:1px solid #333;border-radius:12px;padding:13px 14px;margin-bottom:9px;}
+.ctag{display:inline-block;font-size:12px;padding:3px 9px;border-radius:10px;background:#2a3a28;color:#7dcc99;margin:2px 3px 2px 0;}
+.cb{border:1px solid #333;border-radius:12px;padding:12px;margin-bottom:9px;position:relative;background:#222;}
+.cb-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:9px;}
+.rmbtn{position:absolute;top:9px;right:9px;background:none;border:none;font-size:20px;color:#555;cursor:pointer;}
+.cchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;}
+.cc{padding:7px 11px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #444;background:#2a2a2a;color:#aaa;display:inline-block;}
+.cc.on{background:#3a2e0a;color:#c9a227;border-color:#c9a227;}
+.dbtns{display:flex;gap:6px;margin-bottom:9px;}
+.dc{flex:1;padding:9px 4px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #444;background:#2a2a2a;color:#aaa;text-align:center;}
+.dc.d-Del{background:#2a3a28;color:#7dcc99;border-color:#3a7a50;}
+.dc.d-Ex{background:#3a2e0a;color:#c9a227;border-color:#c9a227;}
+.dc.d-FIS{background:#1a2a3a;color:#6ab0f5;border-color:#2a5a8a;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+.tog-row{display:flex;align-items:center;gap:10px;margin-top:9px;padding-top:9px;border-top:1px solid #333;}
+.tog{width:40px;height:24px;border-radius:12px;background:#333;border:none;cursor:pointer;position:relative;flex-shrink:0;}
+.tog.on{background:#2a5c3a;}
+.tog::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#888;top:3px;left:3px;transition:left .15s;}
+.tog.on::after{left:19px;background:#7dcc99;}
+.hidden{display:none;}
+.vbtn{width:100%;padding:13px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;border:1px solid #444;background:#2a2a2a;color:#aaa;font-size:15px;cursor:pointer;margin-top:8px;}
+.vbtn.rec{background:#3a1a1a;color:#f08080;border-color:#7a3a3a;}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat{background:#222;border-radius:10px;padding:11px;text-align:center;}
+.stat-v{font-size:20px;font-weight:700;}
+.stat-l{font-size:11px;color:#888;margin-top:2px;}
+.tab-row{display:flex;border-bottom:1px solid #333;margin-bottom:13px;}
+.tab{flex:1;padding:10px;text-align:center;font-size:13px;cursor:pointer;color:#888;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;}
+.tab.on{color:#c9a227;border-bottom-color:#c9a227;font-weight:600;}
+.sw{position:relative;margin-bottom:12px;}
+.sw input{padding-left:35px;}
+.si{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:15px;color:#888;pointer-events:none;}
+.acw{position:relative;}
+.acl{position:absolute;top:100%;left:0;right:0;background:#2a2a2a;border:1px solid #444;border-top:none;border-radius:0 0 10px 10px;z-index:100;max-height:200px;overflow-y:auto;display:none;}
+.acl.open{display:block;}
+.aci{padding:12px 14px;font-size:15px;cursor:pointer;border-bottom:1px solid #333;color:#f0f0f0;}
+.aci mark{background:none;color:#c9a227;font-weight:600;}
+.pbox{display:flex;align-items:center;justify-content:space-between;background:#222;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:14px;}
+.empty{text-align:center;padding:50px 16px;color:#555;font-size:14px;line-height:1.8;}
+.prog{height:5px;border-radius:3px;background:#333;overflow:hidden;margin-top:8px;}
+.prog-f{height:100%;background:#c9a227;border-radius:3px;}
+.sync{width:8px;height:8px;border-radius:50%;background:#555;display:inline-block;margin-left:4px;}
+.sync.ok{background:#7dcc99;}.sync.err{background:#f08080;}
+.chev{color:#555;font-size:18px;}
+.urg-badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:10px;font-weight:600;margin-bottom:8px;}
+.u-Immediate{background:#3a1a1a;color:#f08080;border:1px solid #7a3a3a;}
+.u-Today{background:#3a2a1a;color:#f0a060;border:1px solid #7a5a3a;}
+.u-This-week{background:#3a3a1a;color:#c9a227;border:1px solid #7a7a3a;}
+.u-This-quarter{background:#1a3a2a;color:#7dcc99;border:1px solid #3a7a5a;}
+.al-card{background:#222;border:1px solid #333;border-radius:14px;padding:14px 15px;margin-bottom:11px;cursor:pointer;}
+.al-card:active{background:#2a2a2a;}
+.res-btn{font-size:13px;padding:10px 16px;border-radius:8px;background:#2a3a28;color:#7dcc99;border:1px solid #3a7a50;cursor:pointer;}
+.pass-btn{font-size:13px;padding:10px 16px;border-radius:8px;background:#3a1a1a;color:#f08080;border:1px solid #7a3a3a;cursor:pointer;}
+.chip{padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid #444;background:#2a2a2a;color:#aaa;display:inline-block;margin:3px;}
+.chip.on{background:#3a2e0a;color:#c9a227;border-color:#c9a227;}
+.del-confirm-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:10px 12px;background:#2a1a1a;border-radius:10px;border:1px solid #5a2a2a;}
+@keyframes pulse-badge{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(240,128,128,.7);}50%{transform:scale(1.25);box-shadow:0 0 0 6px rgba(240,128,128,0);}}
+@keyframes pulse-badge-orange{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(240,160,96,.7);}50%{transform:scale(1.25);box-shadow:0 0 0 6px rgba(240,160,96,0);}}
+@keyframes pulse-pur{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(125,204,153,.7);}50%{transform:scale(1.25);box-shadow:0 0 0 6px rgba(125,204,153,0);}}
+@keyframes slide-down{from{transform:translateY(-100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes slide-up{from{transform:translateY(0);opacity:1;}to{transform:translateY(-100%);opacity:0;}}
+.badge-pulse-imm{animation:pulse-badge 1.2s infinite;}
+.badge-pulse-tod{animation:pulse-badge-orange 1.5s infinite;}
+.flash-banner{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;z-index:999;animation:slide-down .3s ease;}
+.flash-banner.hiding{animation:slide-up .3s ease forwards;}
+</style>
+</head>
+<body>
+<div id="flash-banner" class="flash-banner" style="display:none;">
+  <div style="background:#2a1010;border-bottom:2px solid #f08080;padding:12px 16px;display:flex;align-items:center;gap:10px;max-width:390px;margin:0 auto;">
+    <div id="flash-dot" style="width:10px;height:10px;border-radius:50%;background:#f08080;flex-shrink:0;animation:pulse-badge 1.2s infinite;"></div>
+    <div style="flex:1;min-width:0;">
+      <div id="flash-title" style="font-size:13px;font-weight:600;color:#f08080;"></div>
+      <div id="flash-msg" style="font-size:12px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+    </div>
+    <button onclick="dismissFlash()" style="background:none;border:none;color:#666;font-size:20px;cursor:pointer;padding:0;line-height:1;">&#215;</button>
+    <button onclick="goToAlerts()" style="background:#f08080;color:#1a1a1a;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">View</button>
+  </div>
+</div>
+<div class="pw">
+<div id="s-login" class="screen active">
+  <div class="login-wrap">
+    <div style="background:#222;border-radius:16px;padding:24px;margin-bottom:28px;text-align:center;"><img src="icon-192.png" style="width:96px;height:96px;border-radius:12px;" alt="DG"/></div>
+    <h1 style="font-size:24px;font-weight:700;text-align:center;margin-bottom:6px;color:#fff;">Grower Log</h1>
+    <p style="text-align:center;color:#888;font-size:14px;margin-bottom:24px;">Grain trader conversation tracker</p>
+    <label class="lbl" style="margin-top:0;">Select your name</label>
+    <select id="login-trader">
+      <option value="">Select trader...</option>
+      <option>Barry</option><option>Andrew</option><option>Murray</option>
+      <option>Casey Lee</option><option>Ben</option><option>Trudy</option>
+    </select>
+    <label class="lbl" style="margin-top:16px;">Grain year</label>
+    <div class="sbar">
+      <button class="stab on" id="ls-2526" onclick="setLS('25/26')">25/26</button>
+      <button class="stab" id="ls-2627" onclick="setLS('26/27')">26/27</button>
+    </div>
+    <button class="green" onclick="doLogin()">Continue</button>
+  </div>
+</div>
+<div id="s-home" class="screen">
+  <div class="topbar">
+    <h1><img src="icon-192.png" style="width:26px;height:26px;border-radius:6px;vertical-align:middle;" alt="DG"/> Grower Log <span class="sync" id="sync-dot"></span></h1>
+    <button class="sm" onclick="exportCSV()">CSV</button>
+    <button onclick="SS('s-purchases')" style="font-size:18px;background:none;border:none;cursor:pointer;position:relative;padding:0 4px;">&#128203;<span id="pur-badge" style="display:none;position:absolute;top:-4px;right:-2px;background:#7dcc99;color:#1a1a1a;border-radius:50%;font-size:10px;font-weight:700;width:18px;height:18px;line-height:18px;text-align:center;"></span></button>
+    <button id="bell" onclick="SS('s-alerts')" style="font-size:20px;background:none;border:none;cursor:pointer;position:relative;padding:0 4px;">&#128680;<span id="badge" style="display:none;position:absolute;top:-4px;right:-2px;color:#fff;border-radius:50%;font-size:10px;font-weight:700;width:18px;height:18px;line-height:18px;text-align:center;"></span></button>
+    <button class="gold" style="width:auto;padding:8px 14px;margin:0;font-size:13px;" onclick="newLog()">+ Log call</button>
+  </div>
+  <div class="sb">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:12px;color:#666;"><span id="h-trader" style="color:#c9a227;font-weight:600;"></span> · <button onclick="doLogout()" style="background:none;border:none;color:#666;font-size:12px;cursor:pointer;">Switch</button></div>
+      <div style="font-size:12px;color:#888;">Season: <span id="h-season" style="color:#c9a227;font-weight:600;"></span></div>
+    </div>
+    <div class="sbar">
+      <button class="stab on" id="hs-2526" onclick="switchSeason('25/26')">25/26</button>
+      <button class="stab" id="hs-2627" onclick="switchSeason('26/27')">26/27</button>
+    </div>
+    <div id="home-stats" style="display:none;" class="stat-row">
+      <div class="stat"><div class="stat-v" id="st-g">0</div><div class="stat-l">Growers</div></div>
+      <div class="stat"><div class="stat-v" id="st-c">0</div><div class="stat-l">Total calls</div></div>
+      <div class="stat"><div class="stat-v" id="st-t">-</div><div class="stat-l">Total tonnes</div></div>
+    </div>
+    <div class="sw"><span class="si">&#128269;</span><input type="text" id="search" placeholder="Search commodity, grower..." oninput="renderHome()"/></div>
+    <div id="comm-view"></div>
+  </div>
+</div>
+<div id="s-commodity" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="SS('s-home')">&#8249;</button>
+    <h1 id="comm-title">Wheat</h1>
+    <button class="gold" style="width:auto;padding:8px 14px;margin:0;font-size:13px;" onclick="newLog()">+ Log call</button>
+  </div>
+  <div class="sb" style="padding:0;">
+    <div id="comm-stats" style="padding:12px 16px;background:#222;border-bottom:1px solid #333;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;"></div>
+    <div id="comm-list"></div>
+  </div>
+</div>
+<div id="s-profile" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="SS(profBack)">&#8249;</button>
+    <h1 id="prof-name">Grower</h1>
+    <button class="gold" style="width:auto;padding:8px 14px;margin:0;font-size:13px;" onclick="logForGrower()">+ Log call</button>
+  </div>
+  <div class="sb">
+    <div id="prof-phone" style="display:none;"></div>
+    <div id="prof-stats" class="stat-row" style="display:none;"></div>
+    <div class="tab-row">
+      <button class="tab on" id="tab-h" onclick="switchTab('h')">History</button>
+      <button class="tab" id="tab-i" onclick="switchTab('i')">Inventory</button>
+      <button class="tab" id="tab-c" onclick="switchTab('c')">Conversations</button>
+    </div>
+    <div id="tab-h-body"></div>
+    <div id="tab-i-body" class="hidden"></div>
+    <div id="tab-c-body" class="hidden"></div>
+  </div>
+</div>
+<div id="s-alerts" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="SS('s-home')">&#8249;</button>
+    <h1>&#128680; Deal Alerts</h1>
+  </div>
+  <div class="sb">
+    <div class="sbar">
+      <button class="stab on" id="at-open" onclick="switchAlertTab('open')">Open</button>
+      <button class="stab" id="at-closed" onclick="switchAlertTab('closed')">Resolved</button>
+    </div>
+    <div id="alerts-list"><div class="empty">No active alerts.</div></div>
+  </div>
+</div>
+<div id="s-alert-detail" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="SS('s-alerts')">&#8249;</button>
+    <h1 id="ad-title">Deal Alert</h1>
+  </div>
+  <div class="sb" id="ad-body"></div>
+  <div id="ad-reply-bar" style="display:none;padding:10px 14px 24px;background:#222;border-top:1px solid #333;">
+    <div style="display:flex;gap:8px;align-items:flex-end;">
+      <textarea id="ad-reply-text" placeholder="Add a message to the team..." style="flex:1;height:60px;font-size:14px;padding:10px;border:1px solid #444;border-radius:10px;background:#2a2a2a;color:#f0f0f0;resize:none;width:auto;"></textarea>
+      <button onclick="postComment()" style="padding:10px 14px;background:#c9a227;color:#1a1a1a;border:none;border-radius:10px;font-size:22px;cursor:pointer;font-weight:700;flex-shrink:0;">&#8593;</button>
+    </div>
+  </div>
+</div>
+<div id="s-purchases" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="SS('s-home')">&#8249;</button>
+    <h1>&#128203; Purchases</h1>
+  </div>
+  <div class="sb">
+    <div class="sbar">
+      <button class="stab on" id="pur-tab-pending" onclick="switchPurTab('pending')">Pending</button>
+      <button class="stab" id="pur-tab-complete" onclick="switchPurTab('complete')">Complete</button>
+      <button class="stab" id="pur-tab-all" onclick="switchPurTab('all')">All</button>
+    </div>
+    <div class="sw"><span class="si">&#128269;</span><input type="text" id="pur-search" placeholder="Search grower, commodity..." oninput="renderPurchases()"/></div>
+    <div id="purchases-list"><div class="empty">No purchases yet.</div></div>
+  </div>
+</div>
+<div id="s-raise-purchase" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="SS('s-profile')">&#8249;</button>
+    <h1 id="pur-form-title">Raise Purchase</h1>
+  </div>
+  <div class="sb">
+    <div style="background:#2a3a28;border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      <span>&#128203;</span><span style="font-size:13px;color:#7dcc99;">This will appear in the Purchases screen for the documents team.</span>
+    </div>
+    <div id="pur-comm-select" style="margin-bottom:14px;"></div>
+    <label class="lbl" style="margin-top:0;">Grain grade</label>
+    <div id="pur-grade-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+      <button class="chip" onclick="selPurGrade(this,'APW1')">APW1</button>
+      <button class="chip" onclick="selPurGrade(this,'APW2')">APW2</button>
+      <button class="chip" onclick="selPurGrade(this,'ASW')">ASW</button>
+      <button class="chip" onclick="selPurGrade(this,'ANW')">ANW</button>
+      <button class="chip" onclick="selPurGrade(this,'AGP')">AGP</button>
+      <button class="chip" onclick="selPurGrade(this,'AH')">AH</button>
+      <button class="chip" onclick="selPurGrade(this,'Feed')">Feed</button>
+      <button class="chip" onclick="selPurGrade(this,'Malt Barley')">Malt Barley</button>
+      <button class="chip" onclick="selPurGrade(this,'Feed Barley')">Feed Barley</button>
+      <button class="chip" onclick="selPurGrade(this,'OAT1')">OAT1</button>
+      <button class="chip" onclick="selPurGrade(this,'OAT2')">OAT2</button>
+      <button class="chip" onclick="selPurGrade(this,'OAT3')">OAT3</button>
+      <button class="chip" onclick="selPurGrade(this,'CAG')">CAG</button>
+      <button class="chip" onclick="selPurGrade(this,'PEA1')">PEA1</button>
+      <button class="chip" onclick="selPurGrade(this,'PEA2')">PEA2</button>
+      <button class="chip" onclick="selPurGrade(this,'FEEDPEA')">FEEDPEA</button>
+      <button class="chip" onclick="selPurGrade(this,'FAB1')">FAB1</button>
+      <button class="chip" onclick="selPurGrade(this,'FAB2')">FAB2</button>
+      <button class="chip" onclick="selPurGrade(this,'LUP1')">LUP1</button>
+    </div>
+    <input type="text" id="pur-grade-other" placeholder="Or type custom grade..." style="font-size:14px;padding:10px;margin-bottom:4px;" oninput="purGrade=this.value;document.querySelectorAll('#pur-grade-chips .chip').forEach(c=>c.classList.remove('on'));"/>
+    <label class="lbl">Tonnes purchased</label>
+    <input type="number" id="pur-tonnes" placeholder="e.g. 500" inputmode="numeric"/>
+    <label class="lbl">Agreed price ($/t)</label>
+    <input type="number" id="pur-price" placeholder="e.g. 385" inputmode="numeric"/>
+    <label class="lbl">Delivery point</label>
+    <div style="display:flex;gap:6px;margin-bottom:4px;" id="pur-del-chips">
+      <button class="dc" onclick="selPurDel(this,'Del')">Del</button>
+      <button class="dc" onclick="selPurDel(this,'Ex farm')">Ex farm</button>
+      <button class="dc" onclick="selPurDel(this,'FIS')">FIS</button>
+    </div>
+    <label class="lbl">Delivery period</label>
+    <input type="text" id="pur-delivery-period" placeholder="e.g. Jan-Mar 2026"/>
+    <label class="lbl">Payment terms</label>
+    <input type="text" id="pur-payment" placeholder="e.g. 30 days from delivery"/>
+    <label class="lbl">Notes for documents team</label>
+    <textarea id="pur-notes" placeholder="Any special conditions, moisture specs, screenings..." style="height:80px;"></textarea>
+    <div style="background:#222;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-top:14px;">
+      <div class="tog-row" style="margin-top:0;padding-top:0;border-top:none;">
+        <button class="tog" id="pur-clear-tog" onclick="togglePurClear()"></button>
+        <div>
+          <div style="font-size:13px;color:#fff;font-weight:600;">Clear full position</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">Wipe remaining tonnes from the grower log</div>
+        </div>
+      </div>
+    </div>
+    <button class="green" style="margin-top:16px;" onclick="savePurchase()">&#128203; Raise purchase</button>
+    <div style="height:30px;"></div>
+  </div>
+</div>
+<div id="s-new" class="screen">
+  <div class="topbar">
+    <button class="back" onclick="closeForm()">&#8249;</button>
+    <h1 id="form-title">Log conversation</h1>
+  </div>
+  <div class="sb">
+    <div style="background:#3a2e0a;border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      <span>&#127806;</span><span style="font-size:13px;color:#c9a227;">Grain year: <strong id="form-season"></strong></span>
+    </div>
+    <label class="lbl" style="margin-top:0;">Trader</label>
+    <div id="form-trader" style="font-size:16px;padding:12px;border:1px solid #333;border-radius:10px;background:#2a2a2a;color:#c9a227;font-weight:600;"></div>
+    <label class="lbl">Grower name</label>
+    <div class="acw">
+      <input type="text" id="f-grower" placeholder="Type to search or add new grower" autocomplete="off" oninput="onGI()" onfocus="onGI()"/>
+      <div class="acl" id="acl"></div>
+    </div>
+    <label class="lbl">Phone number</label>
+    <input type="tel" id="f-phone" placeholder="e.g. 0412 345 678" inputmode="tel"/>
+    <label class="lbl">Date</label>
+    <input type="date" id="f-date"/>
+    <label class="lbl" style="margin-top:16px;">Commodities offered</label>
+    <div id="comm-blocks"></div>
+    <button class="ghost" onclick="addBlock()">+ Add commodity</button>
+    <label class="lbl" style="margin-top:14px;">Raise a deal alert?</label>
+    <div style="background:#222;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:4px;">
+      <div class="tog-row" style="margin-top:0;padding-top:0;border-top:none;">
+        <button class="tog" id="alert-tog" onclick="toggleAlert()"></button>
+        <span style="font-size:13px;color:#aaa;">Flag this conversation as a deal alert</span>
+      </div>
+      <div id="alert-sec" class="hidden" style="margin-top:12px;padding-top:12px;border-top:1px solid #333;">
+        <div class="lbl" style="margin-top:0;">Urgency</div>
+        <div style="margin-bottom:10px;">
+          <button class="chip" onclick="selUrg(this,'Immediate')">&#128308; Immediate</button>
+          <button class="chip" onclick="selUrg(this,'Today')">&#128992; Today</button>
+          <button class="chip" onclick="selUrg(this,'This week')">&#128993; This week</button>
+          <button class="chip" onclick="selUrg(this,'This quarter')">&#128994; This quarter</button>
+        </div>
+        <div class="lbl" style="margin-top:0;">Assign to</div>
+        <select id="f-assignee" style="margin-bottom:10px;">
+          <option>All traders</option>
+          <option>Barry</option><option>Andrew</option><option>Murray</option>
+          <option>Casey Lee</option><option>Ben</option><option>Trudy</option>
+        </select>
+        <div class="lbl" style="margin-top:0;">Alert message to team</div>
+        <textarea id="f-alert-msg" placeholder="e.g. Grower wants $10 over bid. Ben do you want 500t of lentils?" style="height:80px;"></textarea>
+      </div>
+    </div>
+    <label class="lbl" style="margin-top:13px;">Conversation notes</label>
+    <textarea id="f-notes" placeholder="What was discussed? Sentiment, price targets, timing..."></textarea>
+    <button class="vbtn" id="vbtn" onclick="toggleVoice()"><span style="font-size:17px;">&#127908;</span><span id="vlbl">Tap to dictate notes</span></button>
+    <button class="green" onclick="saveEntry()">Save entry</button>
+    <div style="height:30px;"></div>
+  </div>
+</div>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyAo6qK0_K4avB5VoVck9Tc24rD4ewp_DO0",authDomain:"demeter-log.firebaseapp.com",projectId:"demeter-log",storageBucket:"demeter-log.firebasestorage.app",messagingSenderId:"807155727498",appId:"1:807155727498:web:f855822df25679b0320173"};
+const app=initializeApp(cfg);
+const db=getFirestore(app);
+const col=collection(db,"grower_entries");
+window.fbAdd=d=>addDoc(col,d);
+window.fbUpd=(id,d)=>updateDoc(doc(db,"grower_entries",id),d);
+window.fbDel=id=>deleteDoc(doc(db,"grower_entries",id));
+window.fbListen=(cb,err)=>onSnapshot(query(col,orderBy("createdAt","desc")),cb,err);
+window.fbReady=true;
+if(window.onFbReady)window.onFbReady();
+</script>
+<script src="growers.js"></script>
+<script>
+const COMMS=['Wheat','Barley','Canola','Lupins','Oats','Chickpeas','Lentils','Vetch','Faba Beans','Albus','Field Peas'];
+const DLSCLS={'Del':'d-Del','Ex farm':'d-Ex','FIS':'d-FIS'};
+const SEASONS={'25/26':{s:'2025-07-01',e:'2026-06-30'},'26/27':{s:'2026-07-01',e:'2027-06-30'}};
+const CACC={'Wheat':'#c9a227','Barley':'#a0c878','Canola':'#f0d040','Lupins':'#a080d0','Oats':'#80c0a0','Chickpeas':'#e08040','Lentils':'#d06060','Vetch':'#60a0c0','Faba Beans':'#c06080','Albus':'#80a0e0','Field Peas':'#60c080'};
+const APP_VERSION='1778041687';
+
+let entries=[],trader='',season='25/26',loginSeason='25/26';
+let profBack='s-home',editId=null,formBack='s-home';
+let bCount=0,bData={},alertOn=false,selUrg_='',pendDel=null;
+let curGrower=null,curComm=null,alertTab='open',curAlertId=null;
+let recog=null,isRec=false;
+let purEntryId=null,purCommIdx=null,purGrade='',purDelivery='',purTab='pending',purClearFull=false;
+let flashedAlerts=new Set();
+
+function td(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmt(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}):'-';}
+function fmtS(d){return d?new Date(d+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}):'-';}
+function sEnts(s){
+  const r=SEASONS[s];
+  return entries.filter(e=>{
+    if(e.season)return e.season===s;
+    return e.date&&e.date>=r.s&&e.date<=r.e;
+  });
+}
+function gPhone(name){
+  const fl=entries.filter(e=>e.grower===name&&e.phone).sort((a,b)=>b.date.localeCompare(a.date));
+  if(fl.length)return fl[0].phone;
+  if(typeof GROWER_DIRECTORY==='undefined')return '';
+  const fd=GROWER_DIRECTORY.find(g=>g.name.toLowerCase()===name.toLowerCase());
+  return fd?fd.phone:'';
+}
+function allG(){
+  const fl=entries.map(e=>e.grower).filter(Boolean);
+  const fd=typeof GROWER_DIRECTORY!=='undefined'?GROWER_DIRECTORY.map(g=>g.name):[];
+  return[...new Set([...fl,...fd])].sort();
+}
+function uEmoji(u){return u==='Immediate'?'&#128308;':u==='Today'?'&#128992;':u==='This week'?'&#128993;':'&#128994;';}
+function uClass(u){return 'u-'+(u||'').replace(/\s+/g,'-');}
+function setSS(s){const d=document.getElementById('sync-dot');if(d)d.className='sync '+s;}
+
+function SS(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  pendDel=null;
+  if(id==='s-home')renderHome();
+  if(id==='s-profile')renderProfile();
+  if(id==='s-commodity')renderComm();
+  if(id==='s-alerts'){localStorage.setItem('alerts_last_view',Date.now().toString());renderAlerts();}
+  if(id==='s-alert-detail')renderAlertDetail();
+  if(id==='s-purchases')renderPurchases();
+}
+
+window.onFbReady=function(){
+  if(!window.fbReady)return;
+  setSS('loading');
+  window.fbListen(snap=>{
+    entries=[];
+    snap.forEach(d=>entries.push({...d.data(),_fid:d.id}));
+    setSS('ok');
+    updateBadge();
+    updatePurchaseBadge();
+    const a=document.querySelector('.screen.active');
+    if(a){const id=a.id;if(id==='s-home')renderHome();if(id==='s-profile')renderProfile();if(id==='s-commodity')renderComm();if(id==='s-alerts')renderAlerts();if(id==='s-alert-detail')renderAlertDetail();if(id==='s-purchases')renderPurchases();}
+  },err=>{console.error(err);setSS('err');});
+};
+if(window.fbReady)window.onFbReady();
+
+// Auto version check - silently force reload if outdated
+function checkForUpdate(){
+  fetch('/index.html?v='+Date.now(),{cache:'no-store'})
+    .then(r=>r.text())
+    .then(txt=>{
+      const m=txt.match(/name="app-version" content="([^"]+)"/);
+      if(m&&m[1]&&m[1]!==APP_VERSION){
+        if('serviceWorker' in navigator){
+          navigator.serviceWorker.getRegistrations().then(regs=>{
+            Promise.all(regs.map(r=>r.unregister())).then(()=>{
+              caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).finally(()=>location.reload(true));
+            });
+          });
+        }else{location.reload(true);}
+      }
+    }).catch(()=>{});
+}
+setTimeout(checkForUpdate,4000);
+setInterval(checkForUpdate,120000);
+
+function setLS(s){loginSeason=s;document.getElementById('ls-2526').classList.toggle('on',s==='25/26');document.getElementById('ls-2627').classList.toggle('on',s==='26/27');}
+function doLogin(){
+  const t=document.getElementById('login-trader').value;
+  if(!t){alert('Please select your name.');return;}
+  trader=t;season=loginSeason;
+  localStorage.setItem('gl_t',t);localStorage.setItem('gl_s',loginSeason);
+  document.getElementById('h-trader').textContent=t;
+  document.getElementById('h-season').textContent=season;
+  document.getElementById('hs-2526').classList.toggle('on',season==='25/26');
+  document.getElementById('hs-2627').classList.toggle('on',season==='26/27');
+  SS('s-home');
+}
+function doLogout(){trader='';localStorage.removeItem('gl_t');SS('s-login');}
+function checkLogin(){
+  const t=localStorage.getItem('gl_t'),s=localStorage.getItem('gl_s')||'25/26';
+  if(t){trader=t;season=s;document.getElementById('h-trader').textContent=t;document.getElementById('h-season').textContent=s;document.getElementById('hs-2526').classList.toggle('on',s==='25/26');document.getElementById('hs-2627').classList.toggle('on',s==='26/27');return true;}
+  return false;
+}
+function switchSeason(s){season=s;localStorage.setItem('gl_s',s);document.getElementById('h-season').textContent=s;document.getElementById('hs-2526').classList.toggle('on',s==='25/26');document.getElementById('hs-2627').classList.toggle('on',s==='26/27');renderHome();}
+
+function updateBadge(){
+  const urgO={'Immediate':0,'Today':1,'This week':2,'This quarter':3};
+  const open=entries.filter(e=>e.hasAlert&&e.alertStatus==='open'&&(e.alertAssignee==='All traders'||e.alertAssignee===trader)).sort((a,b)=>(urgO[a.alertUrgency]||9)-(urgO[b.alertUrgency]||9));
+  const b=document.getElementById('badge');
+  if(b){
+    if(!open.length){b.style.display='none';}
+    else{b.style.display='block';b.textContent=open.length;const top=open[0];const isI=top.alertUrgency==='Immediate',isT=top.alertUrgency==='Today';b.style.background=isI?'#f08080':isT?'#f0a060':top.alertUrgency==='This week'?'#c9a227':'#7dcc99';b.className=isI?'badge-pulse-imm':isT?'badge-pulse-tod':'';}
+  }
+  showFlashIfNeeded(open);
+  const lastView=parseInt(localStorage.getItem('alerts_last_view')||'0');
+  const hasUnread=open.some(e=>(e.alertComments||[]).some(c=>c.at>lastView&&c.trader!==trader));
+  const bell=document.getElementById('bell');if(bell)bell.style.opacity=hasUnread?'1':'0.75';
+}
+
+function updatePurchaseBadge(){
+  const pending=entries.reduce((n,e)=>n+(e.purchases||[]).filter(p=>p.status==='pending').length,0);
+  const b=document.getElementById('pur-badge');
+  if(b){b.style.display=pending?'block':'none';if(pending){b.textContent=pending;b.style.animation='pulse-pur 1.4s infinite';}}
+}
+
+function showFlashIfNeeded(open){
+  const urgent=open.filter(e=>e.alertUrgency==='Immediate'||e.alertUrgency==='Today');
+  if(!urgent.length)return;
+  const top=urgent[0];
+  const key=top._fid+'_'+(top.alertComments||[]).length;
+  if(flashedAlerts.has(key))return;
+  flashedAlerts.add(key);
+  const banner=document.getElementById('flash-banner');
+  const ft=document.getElementById('flash-title');
+  const fm=document.getElementById('flash-msg');
+  if(!banner||!ft||!fm)return;
+  const isI=top.alertUrgency==='Immediate';
+  const comms=(top.commodities||[]).filter(c=>c.commodity).map(c=>c.commodity+(c.tonnes?' '+parseFloat(c.tonnes).toLocaleString()+'t':'')).join(', ');
+  ft.textContent=(isI?'Immediate alert':'Today alert')+' — '+(comms||top.alertMessage);
+  fm.textContent=top.grower+' · '+top.alertMessage;
+  ft.style.color=isI?'#f08080':'#f0a060';
+  banner.style.display='block';banner.classList.remove('hiding');
+  setTimeout(()=>dismissFlash(),6000);
+}
+function dismissFlash(){const b=document.getElementById('flash-banner');if(!b)return;b.classList.add('hiding');setTimeout(()=>{b.style.display='none';b.classList.remove('hiding');},300);}
+function goToAlerts(){dismissFlash();SS('s-alerts');}
+
+function renderHome(){
+  const q=(document.getElementById('search')?.value||'').toLowerCase();
+  const se=sEnts(season);
+  const map={};
+  se.forEach(e=>{
+    (e.commodities||[]).forEach(c=>{
+      if(!c.commodity)return;
+      const k=c.commodity;
+      if(!map[k])map[k]={tonnes:0,purchased:0,soldElsewhere:0,prices:[],growers:new Set(),lastDate:''};
+      map[k].tonnes+=parseFloat(c.tonnes||0);
+      map[k].purchased+=parseFloat(c.purchasedTonnes||0);
+      map[k].soldElsewhere+=parseFloat(c.soldElsewhereTonnes||0);
+      if(c.price)map[k].prices.push(parseFloat(c.price));
+      if(parseFloat(c.tonnes||0)>0||(!c.positionCleared&&parseFloat(c.soldElsewhereTonnes||0)===0))map[k].growers.add(e.grower);
+      if(e.date>map[k].lastDate)map[k].lastDate=e.date;
+    });
+  });
+  const keys=Object.keys(map).filter(k=>{
+    if(map[k].growers.size===0&&map[k].tonnes===0)return false;
+    if(!q)return true;
+    if(k.toLowerCase().includes(q))return true;
+    return se.some(e=>(e.grower||'').toLowerCase().includes(q)&&(e.commodities||[]).some(c=>c.commodity===k));
+  }).sort((a,b)=>map[b].lastDate.localeCompare(map[a].lastDate));
+  const activeEnts=se.filter(e=>(e.commodities||[]).some(c=>parseFloat(c.tonnes||0)>0||(!c.positionCleared&&parseFloat(c.soldElsewhereTonnes||0)===0)));
+  const st=document.getElementById('home-stats');
+  if(activeEnts.length>0){
+    st.style.display='grid';
+    document.getElementById('st-g').textContent=new Set(activeEnts.map(e=>e.grower)).size;
+    document.getElementById('st-c').textContent=activeEnts.length;
+    let tt=0;activeEnts.forEach(e=>(e.commodities||[]).forEach(c=>{tt+=parseFloat(c.tonnes||0);}));
+    document.getElementById('st-t').textContent=tt>=1000?(tt/1000).toFixed(1)+'kt':tt+'t';
+  }else{st.style.display='none';}
+  const cv=document.getElementById('comm-view');
+  if(!keys.length){cv.innerHTML=activeEnts.length===0?`<div class="empty">No active leads for <strong style="color:#c9a227">${season}</strong>.<br><br>Tap <strong style="color:#c9a227">+ Log call</strong> to get started.</div>`:'<div class="empty">No matches found.</div>';return;}
+  cv.innerHTML=keys.map(k=>{
+    const r=map[k];
+    const avgP=r.prices.length?Math.round(r.prices.reduce((a,b)=>a+b,0)/r.prices.length):null;
+    const offered=r.tonnes+r.purchased+r.soldElsewhere;
+    const purP=offered>0?Math.min(100,Math.round((r.purchased/offered)*100)):0;
+    const solP=offered>0?Math.min(100,Math.round((r.soldElsewhere/offered)*100)):0;
+    const avP=offered>0?Math.min(100,Math.round((r.tonnes/offered)*100)):0;
+    const col=CACC[k]||'#888';
+    return `<div class="comm-card" onclick="openComm('${k}')">
+      <div class="comm-acc" style="background:${col};"></div>
+      <div style="padding-left:10px;">
+        <div class="comm-title">${k}</div>
+        <div class="cstats">
+          <div class="cstat"><div class="cstat-v">${r.growers.size}</div><div class="cstat-l">Active leads</div></div>
+          <div class="cstat"><div class="cstat-v">${r.tonnes>=1000?(r.tonnes/1000).toFixed(1)+'kt':r.tonnes+'t'}</div><div class="cstat-l">Available</div></div>
+          <div class="cstat"><div class="cstat-v">${avgP?'$'+avgP:'-'}</div><div class="cstat-l">Avg $/t</div></div>
+        </div>
+        <div style="height:6px;border-radius:3px;background:#333;overflow:hidden;display:flex;margin-top:10px;">
+          <div style="height:100%;background:#7dcc99;width:${purP}%;"></div>
+          <div style="height:100%;background:#f08080;width:${solP}%;"></div>
+          <div style="height:100%;background:#c9a227;width:${avP}%;opacity:.5;"></div>
+        </div>
+        <div style="font-size:10px;color:#666;margin-top:4px;">${Math.round(100-avP)}% actioned &middot; ${r.tonnes.toLocaleString()}t available</div>
+        <div class="cfooter"><span style="font-size:11px;color:#888;">Last call: ${fmt(r.lastDate)}</span><span class="chev">&#8250;</span></div>
+      </div></div>`;
+  }).join('');
+}
+
+function openComm(c){curComm=c;document.getElementById('comm-title').textContent=c+' · '+season;SS('s-commodity');}
+function renderComm(){
+  const se=sEnts(season);
+  const rel=[];se.forEach(e=>(e.commodities||[]).forEach(c=>{if(c.commodity===curComm)rel.push({e,c});}));
+  const gm={};rel.forEach(({e,c})=>{if(!gm[e.grower]||e.date>gm[e.grower].date)gm[e.grower]={e,c,date:e.date};});
+  const rows=Object.values(gm).filter(({c})=>{
+    if(c.positionCleared)return false;
+    if(parseFloat(c.soldElsewhereTonnes||0)>0&&parseFloat(c.tonnes||0)===0)return false;
+    return true;
+  }).sort((a,b)=>b.date.localeCompare(a.date));
+  let tt=0,prices=[];rel.forEach(({c})=>{tt+=parseFloat(c.tonnes||0);if(c.price)prices.push(parseFloat(c.price));});
+  const avgP=prices.length?Math.round(prices.reduce((a,b)=>a+b,0)/prices.length):null;
+  document.getElementById('comm-stats').innerHTML=`<div class="cstat"><div class="cstat-v">${rows.length}</div><div class="cstat-l">Active leads</div></div><div class="cstat"><div class="cstat-v">${tt>=1000?(tt/1000).toFixed(1)+'kt':tt+'t'}</div><div class="cstat-l">Available</div></div><div class="cstat"><div class="cstat-v">${avgP?'$'+avgP:'-'}</div><div class="cstat-l">Avg $/t</div></div>`;
+  const list=document.getElementById('comm-list');
+  if(!rows.length){list.innerHTML=`<div class="empty">No active leads for ${curComm} in ${season}.</div>`;return;}
+  const byM={};rows.forEach(({e,c})=>{const mo=e.date?new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{month:'long',year:'numeric'}):'Unknown';if(!byM[mo])byM[mo]=[];byM[mo].push({e,c});});
+  list.innerHTML=Object.entries(byM).map(([mo,rs])=>`<div class="shdr">${mo}</div>`+rs.map(({e,c})=>{
+    const init=e.grower.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const ph=gPhone(e.grower);
+    return `<div class="grow-row" onclick="openPF('${e.grower.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}','s-commodity')">
+      <div class="av">${init}</div>
+      <div class="gm">
+        <div class="gn">${e.grower}</div>
+        <div class="gs">${c.tonnes?parseFloat(c.tonnes).toLocaleString()+'t ':''} ${c.price?'Our $'+Math.round(parseFloat(c.price))+'/t ':''} ${c.targetPrice?'Target $'+Math.round(parseFloat(c.targetPrice))+'/t ':''} ${c.delivery||''} <span style="color:#555;">${fmtS(e.date)}</span></div>
+      </div>
+      ${ph?`<a href="tel:${ph.replace(/\s/g,'')}" onclick="event.stopPropagation()" style="font-size:18px;text-decoration:none;">&#128222;</a>`:''}
+      <span class="chev">&#8250;</span></div>`;
+  }).join('')).join('');
+}
+
+function openPF(g,back){curGrower=g;profBack=back;SS('s-profile');}
+function renderProfile(){
+  const ents=entries.filter(e=>e.grower===curGrower).sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('prof-name').textContent=curGrower;
+  const ph=gPhone(curGrower);
+  const pp=document.getElementById('prof-phone');
+  if(ph){pp.style.display='flex';pp.innerHTML=`<div class="pbox"><div><div style="font-size:11px;color:#888;margin-bottom:3px;">Phone</div><div style="font-size:15px;">${ph}</div></div><a href="tel:${ph.replace(/\s/g,'')}" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#2a3a28;color:#7dcc99;border:1px solid #3a7a50;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;">&#128222; Call now</a></div>`;}
+  else{pp.style.display='none';}
+  let tt=0,pt=0;ents.forEach(e=>(e.commodities||[]).forEach(c=>{tt+=parseFloat(c.tonnes||0);pt+=parseFloat(c.purchasedTonnes||0);}));
+  const ps=document.getElementById('prof-stats');ps.style.display='grid';
+  ps.innerHTML=`<div class="stat"><div class="stat-v">${ents.length}</div><div class="stat-l">Calls</div></div><div class="stat"><div class="stat-v">${tt>=1000?(tt/1000).toFixed(1)+'kt':tt+'t'}</div><div class="stat-l">Available</div></div><div class="stat"><div class="stat-v" style="color:#7dcc99;">${pt>=1000?(pt/1000).toFixed(1)+'kt':pt+'t'}</div><div class="stat-l">Purchased</div></div>`;
+  const bySeason={};ents.forEach(e=>{const s=e.season||Object.keys(SEASONS).find(k=>e.date>=SEASONS[k].s&&e.date<=SEASONS[k].e)||'25/26';if(!bySeason[s])bySeason[s]=[];bySeason[s].push(e);});
+  const hb=document.getElementById('tab-h-body');
+  if(!ents.length){hb.innerHTML='<div class="empty">No calls logged yet.</div>';}
+  else{hb.innerHTML=Object.entries(bySeason).map(([s,es])=>`<div style="font-size:11px;font-weight:600;color:#c9a227;text-transform:uppercase;letter-spacing:.06em;margin:4px 0 8px;">&#127806; ${s} Season</div>`+es.map(e=>{
+    const ch=(e.commodities||[]).filter(c=>c.commodity).map(c=>{
+      const avail=parseFloat(c.tonnes||0);const purch=parseFloat(c.purchasedTonnes||0);const sold=parseFloat(c.soldElsewhereTonnes||0);
+      return `<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:5px;">
+        <span class="ctag">${c.commodity}</span>
+        ${c.delivery?`<span style="font-size:11px;padding:2px 7px;border-radius:8px;background:#2a2a2a;color:#888;">${c.delivery}</span>`:''}
+        ${avail?`<span style="font-size:12px;color:#888;">${avail.toLocaleString()}t avail</span>`:''}
+        ${c.price?`<span style="font-size:12px;color:#c9a227;">Our $${Math.round(parseFloat(c.price))}/t</span>`:''}
+        ${c.targetPrice?`<span style="font-size:12px;color:#f08080;">Target $${Math.round(parseFloat(c.targetPrice))}/t</span>`:''}
+        ${purch?`<span style="font-size:11px;padding:2px 8px;border-radius:8px;background:#2a3a28;color:#7dcc99;">&#10003; ${purch.toLocaleString()}t bought</span>`:''}
+        ${sold?`<span style="font-size:11px;padding:2px 8px;border-radius:8px;background:#3a1a1a;color:#f08080;">&#10007; ${sold.toLocaleString()}t sold ${c.soldTo?'to '+c.soldTo:''}</span>`:''}
+      </div>`;
+    }).join('');
+    const alHtml=e.hasAlert&&e.alertMessage?`<div style="margin-top:8px;padding:8px 10px;background:#2a1e0a;border-radius:8px;border-left:3px solid #c9a227;"><div style="font-size:11px;color:#c9a227;font-weight:600;margin-bottom:4px;">${uEmoji(e.alertUrgency)} ${e.alertUrgency} &middot; To: ${e.alertAssignee}</div><div style="font-size:13px;color:#f0d090;">${e.alertMessage}</div><div style="font-size:11px;color:${e.alertStatus==='closed'||e.alertStatus==='lost'?'#7dcc99':'#c9a227'};margin-top:4px;">${e.alertStatus==='closed'?'&#10003; Resolved':e.alertStatus==='lost'?'&#10007; Lost':'&#9679; Open'}</div></div>`:'';
+    const isPend=pendDel===e._fid;
+    return `<div class="conv-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;color:#888;">${fmt(e.date)} &middot; ${e.trader||'Unknown'}</span></div>
+      ${ch}${e.notes?`<p style="font-size:13px;color:#888;line-height:1.55;margin-top:8px;padding-top:8px;border-top:1px solid #2a2a2a;">${e.notes}</p>`:''}${alHtml}
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid #2a2a2a;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <button class="sm" onclick="editEntry('${e._fid}')">Edit</button>
+        <button class="sm" style="color:#7dcc99;border-color:#3a7a50;" onclick="openRaisePurchase('${e._fid}')">&#128203; Raise purchase</button>
+        ${isPend?`<button class="delcfm" onclick="confirmDel('${e._fid}')">Confirm delete</button><button class="sm" onclick="cancelDel()">Cancel</button>`:`<button class="delbtn" onclick="reqDel('${e._fid}')">&#128465; Delete</button>`}
+      </div>
+      ${isPend?'<div class="del-confirm-row"><span style="font-size:13px;color:#f08080;flex:1;">Are you sure? Cannot be undone.</span></div>':''}
+    </div>`;
+  }).join('')).join('');}
+  const cm={};ents.forEach(e=>(e.commodities||[]).forEach(c=>{if(!c.commodity)return;if(!cm[c.commodity])cm[c.commodity]={tonnes:0,purchased:0,soldElsewhere:0,prices:[],soldTo:'',cleared:false};cm[c.commodity].tonnes+=parseFloat(c.tonnes||0);cm[c.commodity].purchased+=parseFloat(c.purchasedTonnes||0);cm[c.commodity].soldElsewhere+=parseFloat(c.soldElsewhereTonnes||0);if(c.soldTo)cm[c.commodity].soldTo=c.soldTo;if(c.positionCleared)cm[c.commodity].cleared=true;if(c.price)cm[c.commodity].prices.push(parseFloat(c.price));}));
+  const ib=document.getElementById('tab-i-body');
+  ib.innerHTML=Object.keys(cm).length?Object.entries(cm).map(([k,r])=>{
+    const offered=r.tonnes+r.purchased+r.soldElsewhere;
+    const avgP=r.prices.length?Math.round(r.prices.reduce((a,b)=>a+b,0)/r.prices.length):null;
+    const avail=Math.max(0,r.tonnes);
+    const purPct=offered>0?Math.min(100,Math.round((r.purchased/offered)*100)):0;
+    const soldPct=offered>0?Math.min(100,Math.round((r.soldElsewhere/offered)*100)):0;
+    const availPct=offered>0?Math.min(100,Math.round((avail/offered)*100)):0;
+    return `<div class="conv-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-weight:700;font-size:15px;color:#fff;">${k}</span>${avgP?`<span style="font-size:13px;color:#c9a227;">Avg $${avgP}/t</span>`:''}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div style="background:#2a2a2a;border-radius:8px;padding:9px;"><div style="font-size:10px;color:#888;margin-bottom:2px;">Originally offered</div><div style="font-size:15px;font-weight:700;color:#fff;">${offered.toLocaleString()}t</div></div>
+        <div style="background:#2a2a2a;border-radius:8px;padding:9px;"><div style="font-size:10px;color:#888;margin-bottom:2px;">Available</div><div style="font-size:15px;font-weight:700;color:${avail>0?'#c9a227':'#555'};">${avail.toLocaleString()}t</div></div>
+        <div style="background:#2a2a2a;border-radius:8px;padding:9px;"><div style="font-size:10px;color:#888;margin-bottom:2px;">Purchased by us</div><div style="font-size:15px;font-weight:700;color:#7dcc99;">${r.purchased.toLocaleString()}t</div></div>
+        <div style="background:#2a2a2a;border-radius:8px;padding:9px;"><div style="font-size:10px;color:#888;margin-bottom:2px;">Sold elsewhere</div><div style="font-size:15px;font-weight:700;color:#f08080;">${r.soldElsewhere.toLocaleString()}t</div></div>
+      </div>
+      <div style="height:8px;border-radius:4px;background:#333;overflow:hidden;display:flex;margin-bottom:6px;">
+        <div style="height:100%;background:#7dcc99;width:${purPct}%;"></div>
+        <div style="height:100%;background:#f08080;width:${soldPct}%;"></div>
+        <div style="height:100%;background:#c9a227;width:${availPct}%;opacity:.5;"></div>
+      </div>
+      <div style="display:flex;gap:10px;font-size:10px;color:#666;"><span style="color:#7dcc99;">&#9632; Purchased</span><span style="color:#f08080;">&#9632; Sold elsewhere</span><span style="color:#c9a227;opacity:.7;">&#9632; Available</span></div>
+      ${r.soldTo?`<div style="margin-top:8px;font-size:11px;color:#f08080;">Sold to: ${r.soldTo}</div>`:''}
+      ${r.cleared?'<div style="margin-top:4px;font-size:11px;color:#7dcc99;">&#10003; Position fully cleared</div>':''}
+    </div>`;
+  }).join(''):'<div class="empty">No commodity data yet.</div>';
+  switchTab('h');
+}
+function switchTab(t){
+  document.getElementById('tab-h').classList.toggle('on',t==='h');
+  document.getElementById('tab-i').classList.toggle('on',t==='i');
+  document.getElementById('tab-c').classList.toggle('on',t==='c');
+  document.getElementById('tab-h-body').classList.toggle('hidden',t!=='h');
+  document.getElementById('tab-i-body').classList.toggle('hidden',t!=='i');
+  document.getElementById('tab-c-body').classList.toggle('hidden',t!=='c');
+  if(t==='c')renderConvTab();
+}
+function renderConvTab(){
+  const ents=entries.filter(e=>e.grower===curGrower&&e.hasAlert&&e.alertMessage);
+  const cb=document.getElementById('tab-c-body');
+  if(!ents.length){cb.innerHTML='<div class="empty">No alert conversations for this grower yet.</div>';return;}
+  ents.sort((a,b)=>{const aL=Math.max(a.createdAt||0,...(a.alertComments||[]).map(c=>c.at||0));const bL=Math.max(b.createdAt||0,...(b.alertComments||[]).map(c=>c.at||0));return bL-aL;});
+  cb.innerHTML=ents.map(e=>{
+    const uc=uClass(e.alertUrgency);
+    const comments=(e.alertComments||[]).slice().sort((a,b)=>b.at-a.at);
+    const comms=(e.commodities||[]).filter(c=>c.commodity).map(c=>{let s=c.commodity;if(c.tonnes)s+=' · '+parseFloat(c.tonnes).toLocaleString()+'t';if(c.delivery)s+=' · '+c.delivery;if(c.price)s+=' · Our $'+Math.round(parseFloat(c.price))+'/t';if(c.targetPrice)s+=' · Target $'+Math.round(parseFloat(c.targetPrice))+'/t';return s;}).join('\n');
+    const isClosed=e.alertStatus==='closed'||e.alertStatus==='lost';
+    return `<div class="conv-card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span class="urg-badge ${uc}">${uEmoji(e.alertUrgency)} ${e.alertUrgency}</span>
+        ${e.alertStatus==='closed'?'<span style="font-size:11px;padding:3px 9px;border-radius:10px;background:#1a3a2a;color:#7dcc99;font-weight:600;">&#10003; Resolved</span>':e.alertStatus==='lost'?'<span style="font-size:11px;padding:3px 9px;border-radius:10px;background:#3a1a1a;color:#f08080;font-weight:600;">&#10007; Lost</span>':'<span style="font-size:11px;padding:3px 9px;border-radius:10px;background:#3a2e0a;color:#c9a227;font-weight:600;">&#9679; Open</span>'}
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;white-space:pre-line;line-height:1.6;">${comms}</div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px;">${e.trader} · ${fmt(e.date)}</div>
+      <div style="font-size:13px;color:#f0d090;background:#2a1e0a;border-radius:8px;padding:8px 10px;margin-bottom:10px;">${e.alertMessage}</div>
+      ${comments.length?'<div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;">Thread</div>'+comments.map(c=>{const isMe=c.trader===trader;return `<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'};margin-bottom:8px;"><div style="max-width:90%;background:${isMe?'#2a3a28':'#2a2a2a'};border-radius:${isMe?'10px 10px 2px 10px':'10px 10px 10px 2px'};padding:8px 10px;"><div style="font-size:11px;color:${isMe?'#7dcc99':'#c9a227'};font-weight:600;margin-bottom:3px;">${c.trader}</div><div style="font-size:13px;color:#f0f0f0;line-height:1.4;">${c.text}</div>${c.type==='lost'?`<div style="font-size:11px;color:#f08080;margin-top:3px;">&#10007; Sold to: ${c.lostTo||'competitor'}</div>`:''} ${c.type==='resolved'?'<div style="font-size:11px;color:#7dcc99;margin-top:3px;">&#10003; Resolved</div>':''}</div><div style="font-size:10px;color:#555;margin-top:2px;padding:0 3px;">${new Date(c.at).toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>`;}).join(''):'<div style="font-size:12px;color:#555;margin-bottom:8px;">No messages yet.</div>'}
+      ${!isClosed?`<button class="sm" style="margin-top:4px;" onclick="curAlertId='${e._fid}';SS('s-alert-detail')">Open in alerts &#8250;</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+function switchAlertTab(t){alertTab=t;document.getElementById('at-open').classList.toggle('on',t==='open');document.getElementById('at-closed').classList.toggle('on',t==='closed');renderAlerts();}
+function renderAlerts(){
+  localStorage.setItem('alerts_last_view',Date.now().toString());
+  const filtered=entries.filter(e=>e.hasAlert&&e.alertMessage&&(alertTab==='open'?e.alertStatus==='open':(e.alertStatus==='closed'||e.alertStatus==='lost')));
+  filtered.sort((a,b)=>{const aL=Math.max(a.createdAt||0,...(a.alertComments||[]).map(c=>c.at||0));const bL=Math.max(b.createdAt||0,...(b.alertComments||[]).map(c=>c.at||0));return bL-aL;});
+  const list=document.getElementById('alerts-list');
+  if(!filtered.length){list.innerHTML=`<div class="empty">${alertTab==='open'?'No active deal alerts.<br>Raise one when logging a conversation.':'No resolved alerts yet.'}</div>`;return;}
+  const lastView=parseInt(localStorage.getItem('alerts_last_view')||'0');
+  list.innerHTML=filtered.map(e=>{
+    const uc=uClass(e.alertUrgency);
+    const comments=e.alertComments||[];
+    const unread=comments.filter(c=>c.at>lastView&&c.trader!==trader).length;
+    const lastC=comments[0];
+    const comms=(e.commodities||[]).filter(c=>c.commodity).map(c=>{let s=c.commodity;if(c.tonnes)s+=' · '+parseFloat(c.tonnes).toLocaleString()+'t';if(c.delivery)s+=' · '+c.delivery;if(c.price)s+=' · Our $'+Math.round(parseFloat(c.price))+'/t';if(c.targetPrice)s+=' · Target $'+Math.round(parseFloat(c.targetPrice))+'/t';return s;}).join('\n');
+    return `<div class="al-card" onclick="openAD('${e._fid}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span class="urg-badge ${uc}">${uEmoji(e.alertUrgency)} ${e.alertUrgency}</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${unread?`<span style="background:#f08080;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;">${unread}</span>`:''}
+          <span style="font-size:11px;color:#666;">${e.trader} &middot; ${fmtS(e.date)}</span>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;white-space:pre-line;line-height:1.6;">${comms}</div>
+      <div style="font-size:12px;color:#888;margin-bottom:6px;">&#127806; ${e.grower}</div>
+      <div style="font-size:13px;color:#ccc;line-height:1.5;margin-bottom:8px;">${e.alertMessage}</div>
+      ${lastC?`<div style="background:#2a2a2a;border-radius:8px;padding:8px 10px;margin-bottom:6px;"><span style="font-size:11px;color:#c9a227;font-weight:600;">${lastC.trader}</span><span style="font-size:11px;color:#666;"> &middot; ${new Date(lastC.at).toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span><div style="font-size:12px;color:#aaa;margin-top:3px;">${lastC.text}</div></div>`:''}
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;"><span>To: <strong style="color:#aaa;">${e.alertAssignee}</strong></span><span>${comments.length} message${comments.length!==1?'s':''}</span></div>
+      ${e.alertStatus==='closed'?'<div style="margin-top:8px;font-size:12px;color:#7dcc99;">&#10003; Resolved</div>':''}
+      ${e.alertStatus==='lost'?`<div style="margin-top:8px;font-size:12px;color:#f08080;">&#10007; Lost — sold to ${e.alertLostTo||'competitor'}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function openAD(fid){curAlertId=fid;SS('s-alert-detail');}
+function renderAlertDetail(){
+  const e=entries.find(x=>x._fid===curAlertId);if(!e)return;
+  document.getElementById('ad-title').textContent=(e.alertUrgency||'Deal')+' Alert';
+  const uc=uClass(e.alertUrgency);
+  const comments=(e.alertComments||[]).slice().sort((a,b)=>b.at-a.at);
+  const isClosed=e.alertStatus==='closed'||e.alertStatus==='lost';
+  const rb=document.getElementById('ad-reply-bar');if(rb)rb.style.display=isClosed?'none':'flex';
+  const comms=(e.commodities||[]).filter(c=>c.commodity).map(c=>{let s=c.commodity;if(c.tonnes)s+=' &middot; '+parseFloat(c.tonnes).toLocaleString()+'t';if(c.delivery)s+=' &middot; '+c.delivery;if(c.price)s+=' &middot; Our $'+Math.round(parseFloat(c.price))+'/t';if(c.targetPrice)s+=' &middot; Target $'+Math.round(parseFloat(c.targetPrice))+'/t';return s;}).join(', ');
+  document.getElementById('ad-body').innerHTML=
+    `<div style="margin-bottom:14px;"><span class="urg-badge ${uc}">${uEmoji(e.alertUrgency)} ${e.alertUrgency}</span>${e.alertStatus==='lost'?'<span style="font-size:11px;padding:3px 10px;border-radius:10px;background:#3a1a1a;color:#f08080;font-weight:600;margin-left:6px;">&#10007; Lost</span>':e.alertStatus==='closed'?'<span style="font-size:11px;padding:3px 10px;border-radius:10px;background:#1a3a2a;color:#7dcc99;font-weight:600;margin-left:6px;">&#10003; Resolved</span>':''}</div>`+
+    `<div class="conv-card" style="margin-bottom:12px;"><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;">${comms}</div><div style="font-size:13px;color:#888;margin-bottom:6px;">&#127806; Grower: <strong style="color:#f0f0f0;">${e.grower}</strong></div><div style="font-size:13px;color:#888;margin-bottom:4px;">Raised by <strong style="color:#c9a227;">${e.trader}</strong> &middot; ${new Date(e.createdAt).toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div><div style="font-size:13px;color:#888;margin-bottom:10px;">Assigned to: <strong style="color:#f0f0f0;">${e.alertAssignee}</strong></div><p style="font-size:15px;color:#f0f0f0;line-height:1.6;">${e.alertMessage}</p></div>`+
+    (comments.length?`<div style="font-size:12px;font-weight:600;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em;">Thread &middot; ${comments.length} message${comments.length!==1?'s':''}</div>`+comments.map(c=>{const isMe=c.trader===trader;return `<div style="display:flex;flex-direction:column;align-items:${isMe?'flex-end':'flex-start'};margin-bottom:10px;"><div style="max-width:85%;background:${isMe?'#2a3a28':'#2a2a2a'};border-radius:${isMe?'12px 12px 2px 12px':'12px 12px 12px 2px'};padding:10px 12px;"><div style="font-size:11px;color:${isMe?'#7dcc99':'#c9a227'};font-weight:600;margin-bottom:4px;">${c.trader}</div><div style="font-size:14px;color:#f0f0f0;line-height:1.5;">${c.text}</div>${c.type==='lost'?`<div style="font-size:11px;color:#f08080;margin-top:4px;font-weight:600;">&#10007; Sold to: ${c.lostTo||'competitor'}</div>`:''}${c.type==='resolved'?'<div style="font-size:11px;color:#7dcc99;margin-top:4px;font-weight:600;">&#10003; Marked as resolved</div>':''}</div><div style="font-size:10px;color:#555;margin-top:3px;padding:0 4px;">${new Date(c.at).toLocaleDateString('en-AU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>`;}).join(''):'<div style="text-align:center;padding:20px;color:#555;font-size:13px;">No messages yet. Be the first to respond.</div>')+
+    (!isClosed?`<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;margin-bottom:12px;"><button class="res-btn" style="flex:1;" onclick="resolveAl('${curAlertId}')">&#10003; Mark as resolved</button><button onclick="showLostModal('${curAlertId}')" style="flex:1;padding:10px 16px;border-radius:8px;background:#3a1a1a;color:#f08080;border:1px solid #7a3a3a;cursor:pointer;font-size:13px;">&#10007; Sold elsewhere</button></div>`:`<div style="text-align:center;padding:14px;background:${e.alertStatus==='lost'?'#2a1a1a':'#1a2a1a'};border-radius:12px;margin-top:12px;margin-bottom:12px;"><div style="font-size:14px;color:${e.alertStatus==='lost'?'#f08080':'#7dcc99'};font-weight:600;">${e.alertStatus==='lost'?'&#10007; Lost — sold to '+(e.alertLostTo||'competitor'):'&#10003; Resolved'}</div></div>`);
+}
+async function postComment(){
+  const text=document.getElementById('ad-reply-text')?.value.trim();if(!text)return;
+  const e=entries.find(x=>x._fid===curAlertId);if(!e)return;
+  const comment={trader,text,type:'comment',at:Date.now()};
+  const updated=[comment,...(e.alertComments||[])];
+  try{await window.fbUpd(curAlertId,{alertComments:updated});document.getElementById('ad-reply-text').value='';renderAlertDetail();}
+  catch(err){console.error(err);alert('Could not post comment.');}
+}
+function showLostModal(fid){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  const who=prompt('Who was it sold to? (e.g. CBH, Viterra, Elders)');if(who===null)return;
+  const totalT=(e.commodities||[]).reduce((sum,c)=>sum+parseFloat(c.tonnes||0),0);
+  const fullPos=confirm('Full position gone?\n\nOK = wipe all '+totalT+'t.\nCancel = enter partial tonnes.');
+  let soldT=totalT;
+  if(!fullPos){const t=prompt('How many tonnes sold to '+who+'?');if(t===null)return;soldT=parseFloat(t)||0;}
+  markLost(fid,who,soldT,fullPos);
+}
+async function markLost(fid,lostTo,soldTonnes,fullPosition){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  const updatedComms=(e.commodities||[]).map(c=>{const orig=parseFloat(c.tonnes||0);if(fullPosition)return{...c,soldElsewhereTonnes:orig,soldTo:lostTo,tonnes:0};const sold=Math.min(soldTonnes,orig);return{...c,soldElsewhereTonnes:(parseFloat(c.soldElsewhereTonnes||0)+sold),soldTo:lostTo,tonnes:Math.max(0,orig-sold)};});
+  const txt=fullPosition?'Full position sold to '+(lostTo||'competitor')+'. Grower log cleared.':soldTonnes+'t sold to '+(lostTo||'competitor')+'. Grower log updated.';
+  const comment={trader,text:txt,type:'lost',lostTo:lostTo||'',soldTonnes,fullPosition,at:Date.now()};
+  const updatedComments=[comment,...(e.alertComments||[])];
+  try{await window.fbUpd(fid,{alertStatus:'lost',alertLostTo:lostTo||'',alertComments:updatedComments,commodities:updatedComms});renderAlertDetail();renderAlerts();}
+  catch(err){console.error(err);alert('Could not update.');}
+}
+async function resolveAl(fid){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  const comment={trader,text:'Alert marked as resolved.',type:'resolved',at:Date.now()};
+  const updated=[comment,...(e.alertComments||[])];
+  try{await window.fbUpd(fid,{alertStatus:'closed',alertComments:updated});alertTab='closed';document.getElementById('at-open').classList.remove('on');document.getElementById('at-closed').classList.add('on');SS('s-alerts');}
+  catch(err){console.error(err);}
+}
+
+function reqDel(fid){pendDel=fid;renderProfile();}
+function cancelDel(){pendDel=null;renderProfile();}
+async function confirmDel(fid){
+  try{await window.fbDel(fid);pendDel=null;if(!entries.filter(e=>e.grower===curGrower&&e._fid!==fid).length)SS(profBack);else renderProfile();}
+  catch(err){console.error(err);alert('Could not delete.');}
+}
+
+function freshForm(gName){
+  editId=null;
+  document.getElementById('form-title').textContent='Log conversation';
+  document.getElementById('form-trader').textContent=trader;
+  document.getElementById('form-season').textContent=season;
+  document.getElementById('f-grower').value=gName||'';
+  document.getElementById('f-phone').value=gName?gPhone(gName):'';
+  document.getElementById('f-date').value=td();
+  document.getElementById('f-notes').value='';
+  alertOn=false;selUrg_='';
+  document.getElementById('alert-tog').classList.remove('on');
+  document.getElementById('alert-sec').classList.add('hidden');
+  document.querySelectorAll('#alert-sec .chip').forEach(c=>c.classList.remove('on'));
+  document.getElementById('f-assignee').value='All traders';
+  document.getElementById('f-alert-msg').value='';
+  bCount=0;bData={};document.getElementById('comm-blocks').innerHTML='';
+  addBlock();stopVoice();document.getElementById('acl').classList.remove('open');
+}
+function newLog(){formBack=document.querySelector('.screen.active')?.id||'s-home';freshForm('');SS('s-new');}
+function logForGrower(){formBack='s-profile';freshForm(curGrower);SS('s-new');}
+function closeForm(){stopVoice();document.getElementById('acl').classList.remove('open');SS(formBack);}
+function toggleAlert(){alertOn=!alertOn;document.getElementById('alert-tog').classList.toggle('on',alertOn);document.getElementById('alert-sec').classList.toggle('hidden',!alertOn);if(!alertOn){selUrg_='';document.querySelectorAll('#alert-sec .chip').forEach(c=>c.classList.remove('on'));}}
+function selUrg(el,v){document.querySelectorAll('#alert-sec .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');selUrg_=v;}
+function onGI(){
+  const val=document.getElementById('f-grower').value.trim().toLowerCase();
+  const list=document.getElementById('acl');
+  const matches=val?allG().filter(g=>g.toLowerCase().includes(val)):allG().slice(0,30);
+  if(!matches.length||(matches.length===1&&matches[0].toLowerCase()===val)){list.classList.remove('open');return;}
+  list.innerHTML=matches.map(g=>{const hi=val?g.replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>'):g;return `<div class="aci" onmousedown="pickG('${g.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')"><span>${hi}</span></div>`;}).join('');
+  list.classList.add('open');
+}
+function pickG(name){document.getElementById('f-grower').value=name;document.getElementById('f-phone').value=gPhone(name);document.getElementById('acl').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.acw'))document.getElementById('acl').classList.remove('open');});
+
+function addBlock(){
+  bCount++;const id=bCount;
+  bData[id]={commodity:'',tonnes:'',price:'',targetPrice:'',delivery:''};
+  const d=document.createElement('div');d.className='cb';d.id='blk-'+id;
+  d.innerHTML=
+    `<div class="cb-title">Commodity ${id}</div>`+
+    (id>1?`<button class="rmbtn" onclick="rmBlock(${id})">&#215;</button>`:'')+
+    `<div class="cchips" id="cch-${id}">`+COMMS.map(c=>`<div class="cc" onclick="selComm(${id},this,'${c}')">${c}</div>`).join('')+`</div>`+
+    `<div class="lbl" style="margin-top:0;">Delivery point</div>`+
+    `<div class="dbtns" id="del-${id}"><div class="dc" onclick="selDel(${id},this,'Del')">Del</div><div class="dc" onclick="selDel(${id},this,'Ex farm')">Ex farm</div><div class="dc" onclick="selDel(${id},this,'FIS')">FIS</div></div>`+
+    `<div class="two"><div><div class="lbl" style="margin-top:0;">Tonnes</div><input type="number" placeholder="e.g. 200" inputmode="numeric" style="font-size:15px;padding:10px;" oninput="bData[${id}].tonnes=this.value"/></div><div><div class="lbl" style="margin-top:0;">Our price ($/t)</div><input type="number" placeholder="e.g. 380" inputmode="numeric" style="font-size:15px;padding:10px;" oninput="bData[${id}].price=this.value"/></div></div>`+
+    `<div class="lbl" style="margin-top:8px;">Grower target price ($/t)</div><input type="number" placeholder="e.g. 395" inputmode="numeric" style="font-size:15px;padding:10px;width:100%;" oninput="bData[${id}].targetPrice=this.value"/>`;
+  document.getElementById('comm-blocks').appendChild(d);
+}
+function rmBlock(id){delete bData[id];const el=document.getElementById('blk-'+id);if(el)el.remove();}
+function selComm(id,el,v){document.querySelectorAll(`#cch-${id} .cc`).forEach(c=>c.classList.remove('on'));el.classList.add('on');bData[id].commodity=v;}
+function selDel(id,el,v){document.querySelectorAll(`#del-${id} .dc`).forEach(c=>c.classList.remove('d-Del','d-Ex','d-FIS'));el.classList.add(DLSCLS[v]);bData[id].delivery=v;}
+
+async function saveEntry(){
+  const grower=document.getElementById('f-grower').value.trim();
+  if(!grower){alert('Please enter a grower name.');return;}
+  const alertMsg=document.getElementById('f-alert-msg').value.trim();
+  if(alertOn&&!alertMsg){alert('Please add an alert message or turn off the deal alert toggle.');return;}
+  const commodities=Object.values(bData).filter(b=>b.commodity||b.tonnes||b.price);
+  const data={grower,phone:document.getElementById('f-phone').value.trim(),trader,date:document.getElementById('f-date').value||td(),season,commodities,notes:document.getElementById('f-notes').value.trim(),hasAlert:alertOn&&!!alertMsg,alertUrgency:alertOn?selUrg_:'',alertAssignee:alertOn?(document.getElementById('f-assignee').value||'All traders'):'',alertMessage:alertOn?alertMsg:'',alertStatus:alertOn&&alertMsg?'open':'',alertComments:[],createdAt:Date.now()};
+  try{if(editId){await window.fbUpd(editId,data);}else{await window.fbAdd(data);}curGrower=grower;SS('s-profile');}
+  catch(err){console.error(err);alert('Could not save. Check your connection.');}
+}
+function editEntry(fid){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  editId=fid;formBack='s-profile';
+  document.getElementById('form-title').textContent='Edit entry';
+  document.getElementById('form-trader').textContent=e.trader||trader;
+  document.getElementById('form-season').textContent=e.season||season;
+  document.getElementById('f-grower').value=e.grower||'';
+  document.getElementById('f-phone').value=e.phone||gPhone(e.grower)||'';
+  document.getElementById('f-date').value=e.date||td();
+  document.getElementById('f-notes').value=e.notes||'';
+  alertOn=e.hasAlert||false;selUrg_=e.alertUrgency||'';
+  document.getElementById('alert-tog').classList.toggle('on',alertOn);
+  document.getElementById('alert-sec').classList.toggle('hidden',!alertOn);
+  document.querySelectorAll('#alert-sec .chip').forEach(c=>{const m=c.getAttribute('onclick')?.match(/'([^']+)'\)/);if(m)c.classList.toggle('on',m[1]===selUrg_);});
+  document.getElementById('f-assignee').value=e.alertAssignee||'All traders';
+  document.getElementById('f-alert-msg').value=e.alertMessage||'';
+  bCount=0;bData={};document.getElementById('comm-blocks').innerHTML='';
+  const comms=e.commodities?.length?e.commodities:[{}];
+  comms.forEach(c=>{
+    addBlock();const id=bCount;
+    bData[id]={commodity:c.commodity||'',tonnes:c.tonnes||'',price:c.price||'',targetPrice:c.targetPrice||'',delivery:c.delivery||''};
+    if(c.commodity){const el=document.querySelector(`#cch-${id} .cc[onclick*="'${c.commodity}'"]`);if(el)el.classList.add('on');}
+    if(c.delivery){const el=document.querySelector(`#del-${id} .dc[onclick*="'${c.delivery}'"]`);if(el)el.classList.add(DLSCLS[c.delivery]);}
+    const nums=document.querySelectorAll(`#blk-${id} input[type=number]`);
+    if(nums[0])nums[0].value=c.tonnes||'';if(nums[1])nums[1].value=c.price||'';if(nums[2])nums[2].value=c.targetPrice||'';
+  });
+  SS('s-new');
+}
+
+function openRaisePurchase(fid){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  purEntryId=fid;purGrade='';purDelivery='';purClearFull=false;
+  document.getElementById('pur-form-title').textContent='Raise Purchase · '+e.grower;
+  document.getElementById('pur-tonnes').value='';document.getElementById('pur-price').value='';
+  document.getElementById('pur-delivery-period').value='';document.getElementById('pur-payment').value='30 days from delivery';
+  document.getElementById('pur-notes').value='';document.getElementById('pur-grade-other').value='';
+  document.getElementById('pur-clear-tog').classList.remove('on');
+  document.querySelectorAll('#pur-grade-chips .chip').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('#pur-del-chips .dc').forEach(c=>c.classList.remove('d-Del','d-Ex','d-FIS'));
+  const comms=(e.commodities||[]).filter(c=>c.commodity);
+  const sel=document.getElementById('pur-comm-select');
+  if(!comms.length){alert('No commodities on this log entry.');return;}
+  if(comms.length===1){
+    purCommIdx=0;const c=comms[0];
+    document.getElementById('pur-tonnes').value=c.tonnes||'';document.getElementById('pur-price').value=c.price||'';
+    if(c.delivery){const el=document.querySelector(`#pur-del-chips .dc[onclick*="'${c.delivery}'"]`);if(el)selPurDel(el,c.delivery);}
+    sel.innerHTML=`<div style="background:#2a2a2a;border-radius:10px;padding:12px;margin-bottom:4px;"><div style="font-size:11px;color:#888;margin-bottom:4px;">Commodity</div><div style="font-size:16px;font-weight:700;color:#fff;">${c.commodity}</div></div>`;
+  }else{
+    purCommIdx=null;
+    sel.innerHTML='<div class="lbl" style="margin-top:0;">Select commodity to purchase</div>'+comms.map((c,i)=>`<div class="conv-card" id="pur-comm-opt-${i}" onclick="selectPurComm(${i})" style="cursor:pointer;margin-bottom:8px;border-color:#444;"><div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:15px;font-weight:600;color:#fff;">${c.commodity}</div><div style="font-size:12px;color:#888;margin-top:2px;">${c.tonnes?c.tonnes+'t ':''} ${c.price?'$'+Math.round(parseFloat(c.price))+'/t ':''} ${c.delivery||''}</div></div><span id="pur-dot-${i}" style="font-size:20px;color:#555;">&#9675;</span></div></div>`).join('');
+  }
+  SS('s-raise-purchase');
+}
+function selectPurComm(idx){
+  purCommIdx=idx;
+  document.querySelectorAll('[id^="pur-dot-"]').forEach((el,i)=>{el.innerHTML=i===idx?'&#9679;':'&#9675;';el.style.color=i===idx?'#7dcc99':'#555';});
+  document.querySelectorAll('[id^="pur-comm-opt-"]').forEach((el,i)=>{el.style.borderColor=i===idx?'#3a7a50':'#444';});
+  const e=entries.find(x=>x._fid===purEntryId);if(!e)return;
+  const c=(e.commodities||[]).filter(cm=>cm.commodity)[idx];if(!c)return;
+  document.getElementById('pur-tonnes').value=c.tonnes||'';document.getElementById('pur-price').value=c.price||'';
+  if(c.delivery){const el=document.querySelector(`#pur-del-chips .dc[onclick*="'${c.delivery}'"]`);if(el)selPurDel(el,c.delivery);}
+}
+function selPurGrade(el,v){document.querySelectorAll('#pur-grade-chips .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');purGrade=v;document.getElementById('pur-grade-other').value='';}
+function selPurDel(el,v){document.querySelectorAll('#pur-del-chips .dc').forEach(c=>c.classList.remove('d-Del','d-Ex','d-FIS'));el.classList.add('d-'+v.replace(' ',''));purDelivery=v;}
+function togglePurClear(){purClearFull=!purClearFull;document.getElementById('pur-clear-tog').classList.toggle('on',purClearFull);}
+
+async function savePurchase(){
+  if(purCommIdx===null){alert('Please select a commodity.');return;}
+  const grade=purGrade||document.getElementById('pur-grade-other').value.trim();
+  if(!grade){alert('Please select or enter a grain grade.');return;}
+  const tonnes=document.getElementById('pur-tonnes').value;
+  const price=document.getElementById('pur-price').value;
+  if(!tonnes){alert('Please enter tonnes purchased.');return;}
+  if(!price){alert('Please enter agreed price.');return;}
+  const e=entries.find(x=>x._fid===purEntryId);if(!e)return;
+  const comms=(e.commodities||[]).filter(c=>c.commodity);
+  const c=comms[purCommIdx];
+  const purchase={logEntryId:purEntryId,grower:e.grower,trader:e.trader||trader,season:e.season,logDate:e.date,commodity:c.commodity,grade,tonnes,price,delivery:purDelivery||c.delivery||'',deliveryPeriod:document.getElementById('pur-delivery-period').value.trim(),paymentTerms:document.getElementById('pur-payment').value.trim(),notes:document.getElementById('pur-notes').value.trim(),raisedBy:trader,raisedAt:Date.now(),status:'pending'};
+  const existingPurchases=[...(e.purchases||[]),purchase];
+  const updatedComms=(e.commodities||[]).map((cm,ci)=>{
+    if(ci!==purCommIdx)return cm;
+    const orig=parseFloat(cm.tonnes||0);
+    if(purClearFull)return{...cm,purchasedTonnes:(parseFloat(cm.purchasedTonnes||0)+parseFloat(tonnes)),tonnes:0,positionCleared:true};
+    return{...cm,purchasedTonnes:(parseFloat(cm.purchasedTonnes||0)+parseFloat(tonnes)),tonnes:Math.max(0,orig-parseFloat(tonnes))};
+  });
+  const allCleared=updatedComms.every(cm=>parseFloat(cm.tonnes||0)===0);
+  const updateData={purchases:existingPurchases,commodities:updatedComms};
+  if(allCleared&&e.hasAlert&&e.alertStatus==='open'){
+    const comment={trader,text:'Purchase raised and full position cleared. Alert auto-resolved.',type:'resolved',at:Date.now()};
+    updateData.alertStatus='closed';
+    updateData.alertComments=[comment,...(e.alertComments||[])];
+  }
+  try{await window.fbUpd(purEntryId,updateData);curGrower=e.grower;SS('s-purchases');}
+  catch(err){console.error(err);alert('Could not save purchase. Check connection.');}
+}
+
+function switchPurTab(t){purTab=t;document.getElementById('pur-tab-pending').classList.toggle('on',t==='pending');document.getElementById('pur-tab-complete').classList.toggle('on',t==='complete');document.getElementById('pur-tab-all').classList.toggle('on',t==='all');renderPurchases();}
+async function markPurchaseComplete(fid,idx){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  const updated=(e.purchases||[]).map((p,i)=>i===idx?{...p,status:'complete',completedAt:Date.now()}:p);
+  try{await window.fbUpd(fid,{purchases:updated});purTab='complete';document.getElementById('pur-tab-pending').classList.remove('on');document.getElementById('pur-tab-complete').classList.add('on');document.getElementById('pur-tab-all').classList.remove('on');renderPurchases();updatePurchaseBadge();}
+  catch(err){console.error(err);alert('Could not update.');}
+}
+async function reopenPurchase(fid,idx){
+  const e=entries.find(x=>x._fid===fid);if(!e)return;
+  const updated=(e.purchases||[]).map((p,i)=>i===idx?{...p,status:'pending',completedAt:null}:p);
+  try{await window.fbUpd(fid,{purchases:updated});purTab='pending';document.getElementById('pur-tab-pending').classList.add('on');document.getElementById('pur-tab-complete').classList.remove('on');document.getElementById('pur-tab-all').classList.remove('on');renderPurchases();}
+  catch(err){console.error(err);}
+}
+function renderPurchases(){
+  const q=(document.getElementById('pur-search')?.value||'').toLowerCase();
+  const cutoff=Date.now()-(60*24*60*60*1000);
+  const allP=[];
+  entries.forEach(e=>{(e.purchases||[]).forEach((p,i)=>{
+    if(p.status==='archived')return;
+    if(p.status==='complete'&&p.completedAt&&p.completedAt<cutoff){window.fbUpd(e._fid,{purchases:(e.purchases||[]).map((pu,ii)=>ii===i?{...pu,status:'archived'}:pu)}).catch(()=>{});return;}
+    if(q&&!p.grower.toLowerCase().includes(q)&&!(p.commodity||'').toLowerCase().includes(q)&&!(p.trader||'').toLowerCase().includes(q))return;
+    if(purTab==='pending'&&p.status!=='pending')return;
+    if(purTab==='complete'&&p.status!=='complete')return;
+    allP.push({p,e,i});
+  });});
+  allP.sort((a,b)=>b.p.raisedAt-a.p.raisedAt);
+  const list=document.getElementById('purchases-list');
+  if(!allP.length){const msg=purTab==='pending'?'No pending purchases.<br>Open a conversation and tap <strong style="color:#7dcc99">&#128203; Raise purchase</strong>.':purTab==='complete'?'No completed purchases yet.':'No purchases raised yet.';list.innerHTML='<div class="empty">'+msg+'</div>';return;}
+  if(purTab==='complete'){
+    list.innerHTML='<div style="background:#222;border-radius:12px;overflow:hidden;border:1px solid #333;">'+allP.map(({p,e,i})=>{const fid=e._fid;return `<div style="padding:12px 14px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;gap:10px;"><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:#fff;">${p.grower} <span style="color:#888;font-weight:400;">&middot;</span> <span style="color:#c9a227;">${p.commodity} ${p.grade}</span></div><div style="font-size:12px;color:#888;margin-top:2px;">${parseFloat(p.tonnes).toLocaleString()}t &middot; $${Math.round(parseFloat(p.price))}/t &middot; ${p.delivery||'-'} &middot; ${fmt(p.logDate)}</div></div><button class="sm" onclick="reopenPurchase('${fid}',${i})" style="white-space:nowrap;flex-shrink:0;">&#8617; Reopen</button></div>`;}).join('')+'</div>';
+    return;
+  }
+  list.innerHTML=allP.map(({p,e,i})=>{
+    const fid=e._fid;const ph=gPhone(p.grower);
+    return `<div style="background:#222;border:1px solid #3a7a50;border-radius:16px;padding:18px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:11px;font-weight:600;color:#7dcc99;text-transform:uppercase;letter-spacing:.06em;">&#128203; Purchase Summary</span><span style="font-size:11px;padding:3px 10px;border-radius:10px;background:#3a2e0a;color:#c9a227;font-weight:600;">&#9679; Pending</span></div>
+      <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:2px;">${p.commodity} <span style="font-size:15px;color:#c9a227;">${p.grade}</span></div>
+      <div style="font-size:12px;color:#888;margin-bottom:14px;">&#127806; ${p.season||''} &middot; ${fmt(p.logDate)} &middot; ${p.raisedBy}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div style="background:#2a2a2a;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Grower</div><div style="font-size:15px;font-weight:600;color:#fff;">${p.grower}</div>${ph?`<div style="font-size:12px;color:#c9a227;margin-top:3px;">${ph}</div>`:''}</div>
+        <div style="background:#2a2a2a;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Trader</div><div style="font-size:15px;font-weight:600;color:#fff;">${p.trader||'-'}</div></div>
+        <div style="background:#2a2a2a;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Tonnes</div><div style="font-size:20px;font-weight:700;color:#7dcc99;">${parseFloat(p.tonnes).toLocaleString()}t</div></div>
+        <div style="background:#2a2a2a;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Agreed price</div><div style="font-size:20px;font-weight:700;color:#c9a227;">$${Math.round(parseFloat(p.price))}/t</div></div>
+        <div style="background:#2a2a2a;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Delivery</div><div style="font-size:14px;font-weight:600;color:#fff;">${p.delivery||'-'}</div></div>
+        <div style="background:#2a2a2a;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Delivery period</div><div style="font-size:14px;font-weight:600;color:#fff;">${p.deliveryPeriod||'-'}</div></div>
+        ${p.paymentTerms?`<div style="background:#2a2a2a;border-radius:10px;padding:12px;grid-column:span 2;"><div style="font-size:11px;color:#888;margin-bottom:3px;">Payment terms</div><div style="font-size:14px;font-weight:600;color:#fff;">${p.paymentTerms}</div></div>`:''}
+      </div>
+      ${p.notes?`<div style="background:#2a2a2a;border-radius:10px;padding:12px;margin-bottom:14px;"><div style="font-size:11px;color:#888;margin-bottom:4px;">Notes for documents team</div><div style="font-size:13px;color:#ccc;line-height:1.5;">${p.notes}</div></div>`:''}
+      <button class="green" style="width:100%;padding:13px;font-size:15px;margin-top:0;" onclick="markPurchaseComplete('${fid}',${i})">&#10003; Send to completed</button>
+    </div>`;
+  }).join('');
+}
+
+function exportCSV(){
+  if(!entries.length){alert('No entries yet.');return;}
+  const rows=[['Season','Date','Grower','Phone','Trader','Commodity','Delivery','Tonnes','Our Price','Grower Target','Purchased','Tonnes Purchased','Alert','Urgency','Alert Message','Notes']];
+  entries.forEach(e=>{(e.commodities?.length?e.commodities:[{}]).forEach(c=>{rows.push([e.season||'',e.date||'',e.grower||'',e.phone||'',e.trader||'',c.commodity||'',c.delivery||'',c.tonnes||'',c.price||'',c.targetPrice||'',c.purchasedTonnes?'Yes':'No',c.purchasedTonnes||'',e.hasAlert?'Yes':'No',e.alertUrgency||'',e.alertMessage||'',(e.notes||'').replace(/"/g,'""')]);});});
+  const csv=rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`grower-log-${season.replace('/','_')}-${td()}.csv`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function toggleVoice(){
+  if(isRec){stopVoice();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice dictation works on Chrome/Safari on mobile.');return;}
+  recog=new SR();recog.continuous=true;recog.interimResults=true;recog.lang='en-AU';
+  let base=document.getElementById('f-notes').value;
+  recog.onresult=ev=>{let fin=base,int='';for(let i=ev.resultIndex;i<ev.results.length;i++){if(ev.results[i].isFinal){fin+=(fin?' ':'')+ev.results[i][0].transcript;base=fin;}else{int+=ev.results[i][0].transcript;}}document.getElementById('f-notes').value=fin+(int?' '+int:'');};
+  recog.onerror=()=>stopVoice();recog.onend=()=>stopVoice();recog.start();
+  isRec=true;document.getElementById('vbtn').classList.add('rec');document.getElementById('vlbl').textContent='Recording... tap to stop';
+}
+function stopVoice(){if(recog){try{recog.stop();}catch(e){}recog=null;}isRec=false;const b=document.getElementById('vbtn');if(b)b.classList.remove('rec');const l=document.getElementById('vlbl');if(l)l.textContent='Tap to dictate notes';}
+
+if(checkLogin()){SS('s-home');}else{SS('s-login');}
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(console.error);}</script>
+</body>
+</html>
